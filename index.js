@@ -17,6 +17,9 @@ function findWeather(req, res) {
 
         resp.on('end', () => {
           console.log(JSON.parse(data).weather[0].description);
+          let tiempo;
+          tiempo = { description: JSON.parse(data).weather[0].description };
+          res.send(tiempo);
         });
       }
     )
@@ -29,6 +32,7 @@ function findForecast(req, res) {
   https
     .get(
       `https://api.openweathermap.org/data/2.5/forecast?q=${req.params.city}&appid=835b68b2ab76641ee3803cf5012962c1`,
+
       resp => {
         let data = '';
 
