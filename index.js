@@ -24,16 +24,39 @@ function findWeather(req, res) {
     });
 }
 
-// Set up the routing.
+function findForecast(req, res) {
+  https
+    .get(
+      `https://samples.openweathermap.org/data/2.5/forecast?q=${req.params.city}&appid=835b68b2ab76641ee3803cf5012962c1`,
+      resp => {
+        let data = '';
+
+        resp.on('data', chunk => {
+          data += chunk;
+        });
+
+        resp.on('end', () => {
+          let tiempo = [];
+          for (i = 0; i < 5; i++) {
+            tiempo[i] = JSON.parse(data).list[i].weather[0].description;
+          }
+          res.send(tiempo);
+        });
+      }
+    )
+    .on('error', err => {
+      console.log('Error: ' + err.message);
+    });
+}
+
 var v1 = express.Router();
-var v2 = express.Router();
 
 v1.use('/current', express.Router().get('/:city?', findWeather));
+v1.use('/forecast', express.Router().get('/:city?', findForecast));
 
 app.use('/v1', v1);
-app.use('/', v1); // Set the default version to latest.
+app.use('/', v1);
 
-// Setup server.
 http.createServer(app).listen(8081, function() {
   console.log('Escuchando en puerto 8081');
 });
