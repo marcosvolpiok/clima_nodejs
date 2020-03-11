@@ -6,7 +6,8 @@ const https = require('https');
 function findWeather(req, res) {
   https
     .get(
-      `https://samples.openweathermap.org/data/2.5/weather?q=${req.params.city}&appid=835b68b2ab76641ee3803cf5012962c1`,
+      // `https://samples.openweathermap.org/data/2.5/weather?q=${req.params.city}&appid=835b68b2ab76641ee3803cf5012962c1`,
+      `https://api.openweathermap.org/data/2.5/weather?q=${req.params.city}&appid=835b68b2ab76641ee3803cf5012962c1`,
       resp => {
         let data = '';
 
@@ -27,7 +28,7 @@ function findWeather(req, res) {
 function findForecast(req, res) {
   https
     .get(
-      `https://samples.openweathermap.org/data/2.5/forecast?q=${req.params.city}&appid=835b68b2ab76641ee3803cf5012962c1`,
+      `https://api.openweathermap.org/data/2.5/forecast?q=${req.params.city}&appid=835b68b2ab76641ee3803cf5012962c1`,
       resp => {
         let data = '';
 
