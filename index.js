@@ -43,7 +43,9 @@ function findForecast(req, res) {
         resp.on('end', () => {
           let tiempo = [];
           for (i = 0; i < 5; i++) {
-            tiempo[i] = JSON.parse(data).list[i].weather[0].description;
+            let tiempoDescription = {};
+            tiempoDescription['description'] = JSON.parse(data).list[i].weather[0].description;
+            tiempo.push(tiempoDescription);
           }
           res.send(tiempo);
         });
