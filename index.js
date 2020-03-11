@@ -1,6 +1,6 @@
-var express = require('express');
-var http = require('http');
-var app = express();
+const express = require('express');
+const http = require('http');
+const app = express();
 const https = require('https');
 
 function findWeather(req, res) {
@@ -57,6 +57,18 @@ function findForecast(req, res) {
 }
 
 var v1 = express.Router();
+
+//CORS
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-COntrol-Allow-Request-Method'
+  );
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+  res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
+  next();
+});
 
 v1.use('/current', express.Router().get('/:city?', findWeather));
 v1.use('/forecast', express.Router().get('/:city?', findForecast));
