@@ -18,7 +18,7 @@ function findWeather(req, res) {
         resp.on('end', () => {
           console.log(JSON.parse(data).weather[0].description);
           let tiempo;
-          tiempo = { description: JSON.parse(data).weather[0].description };
+          tiempo = [{ description: JSON.parse(data).weather[0].description }];
           res.send(tiempo);
         });
       }
