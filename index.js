@@ -22,6 +22,7 @@ function getCityFromIp(req) {
   }
 
   let ciudad = '';
+
   if (ip == null) {
     //Si la IP es localhost
     return new Promise(resolve => {
@@ -30,7 +31,7 @@ function getCityFromIp(req) {
   } else {
     return new Promise(resolve => {
       http
-        .get('http://www.ip-api.com/json/24.48.0.1', resp => {
+        .get(`http://www.ip-api.com/json/${ip}`, resp => {
           let data = '';
 
           // A chunk of data has been recieved.
