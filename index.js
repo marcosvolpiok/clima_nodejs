@@ -3,7 +3,51 @@ const http = require('http');
 const app = express();
 const https = require('https');
 
+async function getCityFromIp(req) {
+  //Get IP
+  console.log('ip: ' + req.connection.remoteAddress);
+
+  let ip = '';
+  //::1
+  if (req.connection.remoteAddress == '::1') {
+    ip = null;
+  } else if (req.connection.remoteAddress == '127.0.0.1') {
+    ip = null;
+  } else if (req.connection.remoteAddress.search(':') != -1) {
+    //ip v6
+    ip = req.connection.remoteAddress.split(':')[3];
+  } else {
+    //ip v4
+    ip = req.connection.remoteAddress;
+  }
+
+  let ciudad = '';
+  if (ip == null && 1 == 2) {
+    //'Buenos Aires';
+  } else {
+    http
+      .get('http://ip-api.com/json/24.48.0.1', resp => {
+        let data = '';
+
+        // A chunk of data has been recieved.
+        resp.on('data', chunk => {
+          data += chunk;
+        });
+
+        // The whole response has been received. Print out the result.
+        resp.on('end', () => {
+          console.log(JSON.parse(data).city);
+        });
+      })
+      .on('error', err => {
+        console.log('Error: ' + err.message);
+      });
+  }
+}
+
 function findWeather(req, res) {
+  console.log('ciudad : ' + getCityFromIp(req));
+
   https
     .get(
       // `https://samples.openweathermap.org/data/2.5/weather?q=${req.params.city}&appid=835b68b2ab76641ee3803cf5012962c1`,
@@ -29,6 +73,8 @@ function findWeather(req, res) {
 }
 
 function findForecast(req, res) {
+  const http = require('http');
+
   https
     .get(
       `https://api.openweathermap.org/data/2.5/forecast?q=${req.params.city}&appid=835b68b2ab76641ee3803cf5012962c1`,
