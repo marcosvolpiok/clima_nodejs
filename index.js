@@ -3,7 +3,7 @@ const http = require('http');
 const app = express();
 const https = require('https');
 
-async function getCityFromIp(req) {
+function getCityFromIp(req) {
   //Get IP
   console.log('ip: ' + req.connection.remoteAddress);
 
@@ -22,36 +22,47 @@ async function getCityFromIp(req) {
   }
 
   let ciudad = '';
-  if (ip == null && 1 == 2) {
-    //'Buenos Aires';
+  if (ip == null) {
+    //Si la IP es localhost
+    return new Promise(resolve => {
+      resolve('Buenos Aires');
+    });
   } else {
-    http
-      .get('http://ip-api.com/json/24.48.0.1', resp => {
-        let data = '';
+    return new Promise(resolve => {
+      http
+        .get('http://www.ip-api.com/json/24.48.0.1', resp => {
+          let data = '';
 
-        // A chunk of data has been recieved.
-        resp.on('data', chunk => {
-          data += chunk;
-        });
+          // A chunk of data has been recieved.
+          resp.on('data', chunk => {
+            data += chunk;
+          });
 
-        // The whole response has been received. Print out the result.
-        resp.on('end', () => {
-          console.log(JSON.parse(data).city);
+          // The whole response has been received. Print out the result.
+          resp.on('end', () => {
+            console.log(JSON.parse(data).city);
+            resolve(JSON.parse(data).city);
+          });
+        })
+        .on('error', err => {
+          console.log('Error: ' + err.message);
         });
-      })
-      .on('error', err => {
-        console.log('Error: ' + err.message);
-      });
+    });
   }
 }
 
-function findWeather(req, res) {
-  console.log('ciudad : ' + getCityFromIp(req));
+async function findWeather(req, res) {
+  let ciudad = '';
+  if (!req.params.city) {
+    ciudad = await getCityFromIp(req);
+  } else {
+    ciudad = req.params.city;
+  }
 
   https
     .get(
       // `https://samples.openweathermap.org/data/2.5/weather?q=${req.params.city}&appid=835b68b2ab76641ee3803cf5012962c1`,
-      `https://api.openweathermap.org/data/2.5/weather?q=${req.params.city}&appid=835b68b2ab76641ee3803cf5012962c1`,
+      `https://api.openweathermap.org/data/2.5/weather?q=${ciudad}&appid=835b68b2ab76641ee3803cf5012962c1`,
       resp => {
         let data = '';
 
@@ -72,12 +83,17 @@ function findWeather(req, res) {
     });
 }
 
-function findForecast(req, res) {
-  const http = require('http');
+async function findForecast(req, res) {
+  let ciudad = '';
+  if (!req.params.city) {
+    ciudad = await getCityFromIp(req);
+  } else {
+    ciudad = req.params.city;
+  }
 
   https
     .get(
-      `https://api.openweathermap.org/data/2.5/forecast?q=${req.params.city}&appid=835b68b2ab76641ee3803cf5012962c1`,
+      `https://api.openweathermap.org/data/2.5/forecast?q=${ciudad}&appid=835b68b2ab76641ee3803cf5012962c1`,
 
       resp => {
         let data = '';
