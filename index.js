@@ -5,7 +5,6 @@ const https = require('https');
 
 function getCityFromIp(req) {
   //Get IP
-  console.log('ip: ' + req.connection.remoteAddress);
 
   let ip = '';
   //::1
@@ -43,7 +42,6 @@ function getCityFromIp(req) {
 
           // The whole response has been received. Print out the result.
           resp.on('end', () => {
-            console.log(JSON.parse(data).city);
             resolve(JSON.parse(data).city);
           });
         })
@@ -58,7 +56,6 @@ async function findWeather(req, res) {
   let ciudad = '';
   if (!req.params.city) {
     ciudad = await getCityFromIp(req);
-    console.log('ciduad : ' + ciudad);
   } else {
     ciudad = req.params.city;
   }
@@ -75,8 +72,6 @@ async function findWeather(req, res) {
         });
 
         resp.on('end', () => {
-          console.log(data);
-          console.log(JSON.parse(data).weather[0].description);
           let tiempo;
           tiempo = [{ description: JSON.parse(data).weather[0].description }];
           res.send(tiempo);
@@ -143,6 +138,8 @@ v1.use('/forecast', express.Router().get('/:city?', findForecast));
 app.use('/v1', v1);
 app.use('/', v1);
 
-http.createServer(app).listen(8081, function() {
-  console.log('Escuchando en puerto 8081');
+var server = app.listen(8081, function () {
+  var port = server.address().port;
+  console.log('Escuchando en puerto %s', port);
 });
+module.exports = server;
