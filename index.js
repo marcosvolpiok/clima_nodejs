@@ -13,6 +13,8 @@ function getCityFromIp(req) {
     ip = null;
   } else if (req.connection.remoteAddress == '127.0.0.1') {
     ip = null;
+  } else if (req.connection.remoteAddress == '::ffff:127.0.0.1') {
+    ip = null;
   } else if (req.connection.remoteAddress.search(':') != -1) {
     //ip v6
     ip = req.connection.remoteAddress.split(':')[3];
@@ -56,6 +58,7 @@ async function findWeather(req, res) {
   let ciudad = '';
   if (!req.params.city) {
     ciudad = await getCityFromIp(req);
+    console.log('ciduad : ' + ciudad);
   } else {
     ciudad = req.params.city;
   }
@@ -72,6 +75,7 @@ async function findWeather(req, res) {
         });
 
         resp.on('end', () => {
+          console.log(data);
           console.log(JSON.parse(data).weather[0].description);
           let tiempo;
           tiempo = [{ description: JSON.parse(data).weather[0].description }];
